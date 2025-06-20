@@ -1,4 +1,25 @@
 ﻿@page
 @model Account_Management.Pages.ChartOfAccounts.IndexModel
 @{
+    ViewData["Title"] = "Chart of Accounts";
 }
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary">Chart of Accounts</h2>
+
+    <div class="text-end mb-4">
+        <a asp-page="Create" class="btn btn-primary btn-lg">Create New Account</a>
+    </div>
+
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <ul class="account-tree list-group list-group-flush">
+                @foreach (var account in Model.AccountTree)
+                {
+                    @await Html.PartialAsync("_AccountTree", account)
+                }
+            </ul>
+        </div>
+    </div>
+</div>
