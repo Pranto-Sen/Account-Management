@@ -19,13 +19,17 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" href="/ChartOfAccounts" role="tab" aria-selected="@(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("ChartOfAccounts") ?? false ? "true" : "false")">Chart of Accounts</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" href="/Vouchers" role="tab" aria-selected="@(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("Vouchers") ?? false ? "true" : "false")">Vouchers</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" href="/Users" role="tab" aria-selected="@(ViewContext.RouteData.Values["page"]?.ToString()?.Contains("Users") ?? false ? "true" : "false")">Users</a>
                         </li>
                     </ul>
+
                     <partial name="_LoginPartial"/>
                 </div>
             </div>
