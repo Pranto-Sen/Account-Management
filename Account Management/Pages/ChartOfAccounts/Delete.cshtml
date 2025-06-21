@@ -1,0 +1,30 @@
+﻿@page
+@model Account_Management.Pages.ChartOfAccounts.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete Account";
+}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">Delete Account</h4>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title text-danger">Are you sure you want to delete this account?</h5>
+            <p class="card-text fs-5 fw-semibold text-dark">@Model.Account.AccountName</p>
+
+            <form method="post">
+                <input type="hidden" asp-for="Account.AccountId" />
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash-fill me-1"></i> Delete
+                    </button>
+                    <a asp-page="Index" class="btn btn-secondary">
+                        <i class="bi bi-x-circle me-1"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

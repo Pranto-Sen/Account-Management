@@ -1,0 +1,62 @@
+﻿@page
+@model Account_Management.Pages.ChartOfAccounts.EditModel
+
+@{
+    ViewData["Title"] = "Edit Account";
+}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Edit Account</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="Account.AccountId" />
+
+                <div class="mb-3">
+                    <label asp-for="Account.AccountName" class="form-label"></label>
+                    <input asp-for="Account.AccountName" class="form-control" />
+                    <span asp-validation-for="Account.AccountName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Account.AccountType" class="form-label"></label>
+                    <select asp-for="Account.AccountType" class="form-select">
+                        <option value="Cash">Cash</option>
+                        <option value="Bank">Bank</option>
+                        <option value="Receivable">Receivable</option>
+                        <option value="Payable">Payable</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Account.ParentAccountId" class="form-label"></label>
+                    <select asp-for="Account.ParentAccountId" class="form-select">
+                        <option value="">None</option>
+                        @foreach (var account in Model.Accounts)
+                        {
+                            <option value="@account.AccountId">@account.AccountName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="Account.IsActive" class="form-check-input" type="checkbox" />
+                    <label asp-for="Account.IsActive" class="form-check-label"></label>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i> Save
+                    </button>
+                    <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
