@@ -1,0 +1,50 @@
+﻿
+@page
+@model Account_Management.Pages.Users.ManageRolesModel
+
+@{
+    ViewData["Title"] = "Manage Roles";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary">Manage Roles for @Model.UserEmail</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <h4 class="mb-3 text-secondary">Roles</h4>
+                @foreach (var role in Model.Roles)
+                {
+                    <div class="form-check mb-2">
+                        <input type="checkbox" name="SelectedRoles" value="@role.Name" checked="@Model.SelectedRoles.Contains(role.Name)" class="form-check-input" />
+                        <label class="form-check-label">@role.Name</label>
+                    </div>
+                }
+
+                <h4 class="mt-4 mb-3 text-secondary">Permissions</h4>
+                @foreach (var module in Model.Permissions)
+                {
+                    <h5 class="mb-2 text-muted">@module.ModuleName</h5>
+                    <div class="form-check mb-2">
+                        <input asp-for="@module.CanView" class="form-check-input" />
+                        <label asp-for="@module.CanView" class="form-check-label">Can View</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input asp-for="@module.CanEdit" class="form-check-input" />
+                        <label asp-for="@module.CanEdit" class="form-check-label">Can Edit</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input asp-for="@module.CanDelete" class="form-check-input" />
+                        <label asp-for="@module.CanDelete" class="form-check-label">Can Delete</label>
+                    </div>
+                    <input type="hidden" asp-for="@module.RoleId" />
+                    <input type="hidden" asp-for="@module.ModuleName" />
+                }
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 mt-4">Save</button>
+            </form>
+        </div>
+    </div>
+</div>

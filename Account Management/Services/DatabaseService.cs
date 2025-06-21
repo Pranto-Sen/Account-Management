@@ -60,5 +60,53 @@ namespace Account_Management.Services
                 }
             }
         }
+
+        public List<RolePermission> GetRolePermissions()
+        {
+            var permissions = new List<RolePermission>();
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                using (var cmd = new SqlCommand("sp_ManageRolePermissions", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Action", "SELECT");
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            permissions.Add(new RolePermission
+                            {
+                                RoleId = reader.GetString("RoleId"),
+                                ModuleName = reader.GetString("ModuleName"),
+                                CanView = reader.GetBoolean("CanView"),
+                                CanEdit = reader.GetBoolean("CanEdit"),
+                                CanDelete = reader.GetBoolean("CanDelete")
+                            });
+                        }
+                    }
+                }
+            }
+            return permissions;
+        }
+
+        public void UpdateRolePermissions(RolePermission permission)
+        {
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                using (var cmd = new SqlCommand("sp_ManageRolePermissions", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Action", "UPDATE");
+                    cmd.Parameters.AddWithValue("@RoleId", permission.RoleId);
+                    cmd.Parameters.AddWithValue("@ModuleName", permission.ModuleName);
+                    cmd.Parameters.AddWithValue("@CanView", permission.CanView);
+                    cmd.Parameters.AddWithValue("@CanEdit", permission.CanEdit);
+                    cmd.Parameters.AddWithValue("@CanDelete", permission.CanDelete);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }
