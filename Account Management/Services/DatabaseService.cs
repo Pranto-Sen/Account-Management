@@ -61,6 +61,82 @@ namespace Account_Management.Services
             }
         }
 
+        public void SaveVoucher(Voucher voucher)
+        {
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (var transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        int voucherId;
+                        using (var cmd = new SqlCommand("sp_SaveVoucher", conn, transaction))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@Action", "INSERT_VOUCHER");
+                            cmd.Parameters.AddWithValue("@VoucherType", voucher.VoucherType ?? (object)DBNull.Value);
+                            cmd.Parameters.AddWithValue("@VoucherDate", voucher.VoucherDate);
+                            cmd.Parameters.AddWithValue("@ReferenceNo", voucher.ReferenceNo ?? (object)DBNull.Value);
+                            var voucherIdParam = new SqlParameter("@VoucherId", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                            cmd.Parameters.Add(voucherIdParam);
+                            cmd.ExecuteNonQuery();
+                            voucherId = (int)voucherIdParam.Value;
+                        }
+
+                        foreach (var entry in voucher.Entries)
+                        {
+                            using (var cmd = new SqlCommand("sp_SaveVoucher", conn, transaction))
+                            {
+                                cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.Parameters.AddWithValue("@Action", "INSERT_ENTRY");
+                                cmd.Parameters.AddWithValue("@VoucherId", voucherId);
+                                cmd.Parameters.AddWithValue("@AccountId", entry.AccountId);
+                                cmd.Parameters.AddWithValue("@Debit", entry.Debit);
+                                cmd.Parameters.AddWithValue("@Credit", entry.Credit);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public List<Voucher> GetVouchers()
+        {
+            var vouchers = new List<Voucher>();
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                using (var cmd = new SqlCommand("sp_SaveVoucher", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Action", "SELECT_VOUCHERS");
+                    cmd.Parameters.AddWithValue("@VoucherId", DBNull.Value); // Add missing parameter
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            vouchers.Add(new Voucher
+                            {
+                                VoucherId = reader.GetInt32("VoucherId"),
+                                VoucherType = reader.GetString("VoucherType"),
+                                VoucherDate = reader.GetDateTime("VoucherDate"),
+                                ReferenceNo = reader.GetString("ReferenceNo")
+                            });
+                        }
+                    }
+                }
+            }
+            return vouchers;
+        }
         public List<RolePermission> GetRolePermissions()
         {
             var permissions = new List<RolePermission>();

@@ -1,0 +1,105 @@
+﻿
+@page
+@model Account_Management.Pages.Vouchers.CreateModel
+
+@{
+    ViewData["Title"] = "Create Voucher";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary">Create Voucher</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Voucher.VoucherType" class="form-label"></label>
+                    <select asp-for="Voucher.VoucherType" class="form-select">
+                        <option value="Journal">Journal</option>
+                        <option value="Payment">Payment</option>
+                        <option value="Receipt">Receipt</option>
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Voucher.VoucherDate" class="form-label"></label>
+                    <input asp-for="Voucher.VoucherDate" class="form-control" type="date" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Voucher.ReferenceNo" class="form-label"></label>
+                    <input asp-for="Voucher.ReferenceNo" class="form-control" placeholder="Enter reference number" />
+                </div>
+
+                <h4 class="mt-4 mb-3 text-secondary">Entries</h4>
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Account</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Voucher.Entries.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <select asp-for="Voucher.Entries[i].AccountId" class="form-select">
+                                        @foreach (var account in Model.Accounts)
+                                        {
+                                            <option value="@account.AccountId">@account.AccountName</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <input asp-for="Voucher.Entries[i].Debit" class="form-control" />
+                                </td>
+                                <td>
+                                    <input asp-for="Voucher.Entries[i].Credit" class="form-control" />
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm remove-entry">Remove</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <button type="button" id="addEntry" class="btn btn-secondary btn-sm mb-3">Add Entry</button>
+                <button type="submit" class="btn btn-primary btn-lg w-100">Save Voucher</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('#addEntry').click(function () {
+                var index = $('#entriesTable tbody tr').length;
+                var row = `<tr>
+                    <td>
+                        <select name="Voucher.Entries[${index}].AccountId" class="form-select">
+                            @foreach (var account in Model.Accounts)
+                            {
+                                <option value="@account.AccountId">@account.AccountName</option>
+                            }
+                        </select>
+                    </td>
+                    <td><input name="Voucher.Entries[${index}].Debit" class="form-control" /></td>
+                    <td><input name="Voucher.Entries[${index}].Credit" class="form-control" /></td>
+                    <td><button type="button" class="btn btn-danger btn-sm remove-entry">Remove</button></td>
+                </tr>`;
+                $('#entriesTable tbody').append(row);
+            });
+
+            $(document).on('click', '.remove-entry', function () {
+                $(this).closest('tr').remove();
+            });
+        });
+    </script>
+}
